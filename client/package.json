@@ -1,0 +1,39 @@
+{
+  "name": "YMtGatherer",
+  "version": "0.0.1",
+  "description": "an editable searchable fantastical store for magical cardboard",
+  "main": "lib/app.js",
+  "dependencies": {},
+  "author": {
+    "name": "Daniel Moore",
+    "email": "dan@ehnonymoose.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Ehnonymoose/delver.git"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .jsx --ignore-path .gitignore --cache",
+    "dev": "WEBPACK_ENV=dev ./node_modules/.bin/webpack --watch --inline",
+    "build": "WEBPACK_ENV=build ./node_modules/.bin/webpack"
+  },
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-core": "^6.9.0",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-react": "^6.5.0",
+    "eslint": "^2.10.2",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.8.0",
+    "eslint-plugin-jsx-a11y": "^1.2.2",
+    "eslint-plugin-react": "^5.1.1",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
+    "react-router": "^2.4.1",
+    "watch": "^0.18.0",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  }
+}
