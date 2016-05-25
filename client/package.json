@@ -1,8 +1,7 @@
 {
-  "name": "YMtGatherer",
+  "name": "Delver",
   "version": "0.0.1",
-  "description": "an editable searchable fantastical store for magical cardboard",
-  "main": "lib/app.js",
+  "description": "yet another incredibly niche search tool for magical cardboard",
   "dependencies": {},
   "author": {
     "name": "Daniel Moore",
