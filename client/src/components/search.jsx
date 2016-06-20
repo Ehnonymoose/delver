@@ -23,7 +23,11 @@ export default class MainSearch extends React.Component {
 
   submitQuery(query) {
     console.log('submitted query: ' + query);
-    this.context.router.push({ query: { q: query } });
+    if (query === '') {
+      this.context.router.push({});
+    } else {
+      this.context.router.push({ query: { q: query } });
+    }
   }
 
   render() {
@@ -32,22 +36,15 @@ export default class MainSearch extends React.Component {
         <form className="form" onSubmit={this.searchAll}>
           <div className="row">
             <div className="form-group col-sm-8 col-sm-offset-2">
-              <div className="input-group">
-                <label className="sr-only" htmlFor="input-query">Search terms</label>
-                <input
-                  type="search"
-                  className="form-control input-lg"
-                  name="q"
-                  placeholder="Query..."
-                  autoFocus="true"
-                  onChange={this.updateQuery}
-                />
-                <span className="input-group-btn">
-                  <button type="button" className="btn btn-default btn-lg" data-toggle="button">
-                    <span className="glyphicon glyphicon-question-sign" aria-hidden="true"> </span>
-                  </button>
-                </span>
-              </div>
+              <label className="sr-only" htmlFor="input-query">Search terms</label>
+              <input
+                type="search"
+                className="form-control input-lg"
+                name="q"
+                placeholder="Query..."
+                autoFocus="true"
+                onChange={this.updateQuery}
+              />
             </div>
           </div>
         </form>
