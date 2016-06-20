@@ -1,4 +1,5 @@
 import React from 'react';
+import SearchResults from './results.jsx';
 
 function debounce(fn, interval) {
   var timeout;
@@ -9,7 +10,7 @@ function debounce(fn, interval) {
   }
 }
 
-export default class MainSearch extends React.Component {
+class SearchBar extends React.Component {
   constructor(props) {
     super(props);
 
@@ -31,6 +32,11 @@ export default class MainSearch extends React.Component {
   }
 
   render() {
+    var currentQuery = "";
+    if (this.props.query) {
+      currentQuery = this.props.query.q || "";
+    }
+
     return (
       <div className="voffset">
         <form className="form" onSubmit={this.searchAll}>
@@ -42,6 +48,7 @@ export default class MainSearch extends React.Component {
                 className="form-control input-lg"
                 name="q"
                 placeholder="Query..."
+                value={currentQuery}
                 autoFocus="true"
                 onChange={this.updateQuery}
               />
@@ -52,6 +59,21 @@ export default class MainSearch extends React.Component {
     );
   }
 }
+
+export default class MainSearch extends React.Component {
+  render() {
+    return (
+      <div>
+        <SearchBar query={this.props.location.query} />
+        <SearchResults query={this.props.location.query} />
+      </div>
+    );
+  }
+}
+
+SearchBar.contextTypes = {
+  router: React.PropTypes.object.isRequired,
+};
 
 MainSearch.contextTypes = {
   router: React.PropTypes.object.isRequired,
