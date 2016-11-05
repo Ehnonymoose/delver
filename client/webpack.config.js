@@ -1,7 +1,6 @@
 var webpack = require('webpack');
 var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 var env = process.env.WEBPACK_ENV;
-var WebpackDevServer = require('webpack-dev-server');
 
 var appName = 'app';
 var host = '0.0.0.0';
@@ -9,7 +8,7 @@ var port = '9000';
 
 var plugins = [], outputFile;
 
-if (env === 'build') {
+if (env === 'prod') {
   plugins.push(new UglifyJsPlugin({ minimize: true }));
   outputFile = appName + '.min.js';
 } else {
@@ -39,20 +38,5 @@ var config = {
   },
   plugins: plugins
 };
-
-if (env === 'dev') {
-  new WebpackDevServer(webpack(config), {
-    contentBase: '../server/public/',
-    hot: true,
-    debug: true
-  }).listen(port, host, function (err, result) {
-    if (err) {
-      console.log(err);
-    }
-  });
-  console.log('-------------------------');
-  console.log('Local web server runs at http://' + host + ':' + port);
-  console.log('-------------------------');
-}
 
 module.exports = config;

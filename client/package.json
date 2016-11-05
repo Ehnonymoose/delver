@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "yet another incredibly niche search tool for magical cardboard",
   "dependencies": {},
+  "private": true,
   "author": {
     "name": "Daniel Moore",
     "email": "dan@ehnonymoose.com"
@@ -14,8 +15,8 @@
   },
   "scripts": {
     "lint": "eslint . --ext .jsx --ignore-path .gitignore --cache",
-    "dev": "WEBPACK_ENV=dev ./node_modules/.bin/webpack --watch --inline",
-    "build": "WEBPACK_ENV=build ./node_modules/.bin/webpack"
+    "build-dev": "WEBPACK_ENV=dev ./node_modules/.bin/webpack",
+    "build": "WEBPACK_ENV=prod ./node_modules/.bin/webpack"
   },
   "devDependencies": {
     "babel": "^6.5.2",
