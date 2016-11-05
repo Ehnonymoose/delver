@@ -1,0 +1,17 @@
+
+div.voffset {
+  margin-top: 100px;
+}
+
+div.compact-rules {
+	margin-top: 10px;
+}
+
+span.compact-mana {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+span.compact-mana > img {
+	height: 0.8em;
+}

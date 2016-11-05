@@ -15,7 +15,7 @@ class SearchBar extends React.Component {
     super(props);
 
     this.updateQuery = this.updateQuery.bind(this);
-    this.submitQuery = debounce(this.submitQuery.bind(this), 1000);
+    this.submitQuery = this.submitQuery.bind(this);
   }
 
   updateQuery(evt) {
@@ -23,7 +23,6 @@ class SearchBar extends React.Component {
   }
 
   submitQuery(query) {
-    console.log('submitted query: ' + query);
     if (query === '') {
       this.context.router.push({});
     } else {

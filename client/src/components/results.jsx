@@ -6,29 +6,75 @@ export default class SearchResults extends React.Component {
     super(props);
 
     this.state = {
-      results: [{
-        name: 'Counterspell',
-        mana: 'UU',
-        rules: 'Counter target spell.'
-      }, {
-        name: 'Infinite Obliteration',
-        mana: '1BB',
-        rules: 'Name a creature card. Search target opponent\'s graveyard, hand, and library for any number of cards with that name and exile them. Then that player shuffles his or her library.'
-      }]
+      query: '',
+      results: []
     };
+
+    this.refreshResults = this.refreshResults.bind(this);
+  }
+
+  
+  refreshResults() {
+    let newQuery = this.props.query.q;
+    if (newQuery === undefined) {
+      this.setState({ results: [] });
+      return;
+    }
+
+    if (newQuery.trim() === this.state.query.trim()) {
+      return;
+    }
+
+    this.setState({query: newQuery});
+
+    var me = this;
+    fetch('/query?q=' + encodeURIComponent(newQuery))
+    .then(function(response) {
+      return response.json();
+    }).then(function(response) {
+      me.setState({ results: response });
+    });
+  }
+
+  componentDidUpdate() {
+    this.refreshResults();
+  }
+
+  componentDidMount() {
+    this.refreshResults();
   }
 
   render() {
-    let cardList = this.state.results.map( function(card, idx) {
-      return (
-        <CompactCard {...card} key={idx} />
-      );
-    });
+    if (this.state.results.length > 1)
+    {
+      let cardList = this.state.results.map( function(card, idx) {
+        console.dir(card);
+        return (
+          <CompactCard {...card} key={idx} />
+        );
+      });
 
-    return (
-      <div className="list-group col-sm-10 col-sm-offset-1">
-        {cardList}
-      </div>
-    );
+      return (
+        <div className="list-group col-sm-10 col-sm-offset-1">
+          {cardList}
+        </div>
+      );
+    }
+    else if (this.state.results.length == 1)
+    {
+      return (
+        <div className="col-sm-10 col-sm-offset-1">
+          Unfortunately, we don't yet support single-card display :(
+        </div>
+      );
+    }
+    else
+    {
+      return (
+        <div className="col-sm-10 col-sm-offset-1">
+          No cards found!
+        </div>
+      );
+    }
   }
 }

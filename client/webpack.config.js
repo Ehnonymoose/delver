@@ -24,9 +24,9 @@ var config = {
     extensions: ['', '.js', '.jsx']
   },
   output: {
-    path: __dirname + '/public/js',
+    path: __dirname + '/../server/public/js',
     filename: outputFile,
-    publicPath: __dirname + '/public'
+    publicPath: __dirname + '/../server/public'
   },
   module: {
     loaders: [
@@ -42,7 +42,7 @@ var config = {
 
 if (env === 'dev') {
   new WebpackDevServer(webpack(config), {
-    contentBase: './public',
+    contentBase: '../server/public/',
     hot: true,
     debug: true
   }).listen(port, host, function (err, result) {
