@@ -143,6 +143,9 @@ for setCode in blob:
 		if 'multiverseid' in cardData:
 			thisPrinting.multiverseId = cardData['multiverseid']
 
+		if 'artist' in cardData:
+			thisPrinting.artist = cardData['artist']
+
 		printings.append(thisPrinting)
 
 

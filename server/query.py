@@ -162,7 +162,8 @@ QUERY_TAGS = {
 	'ft': ([':', '!'], createTextConditionForField(models.CardPrinting.flavor)),
 	'set': ([':'], createSetCondition),
 	'e': ([':'], createSetCondition),
-	'r': ([':'], createRarityCondition)
+	'r': ([':'], createRarityCondition),
+	'a': ([':'], createTextConditionForField(models.CardPrinting.artist))
 }
 
 
