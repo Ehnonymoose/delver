@@ -7,28 +7,34 @@ export default class SearchResults extends React.Component {
 
     this.state = {
       query: '',
+      start: 0,
       results: []
     };
 
     this.refreshResults = this.refreshResults.bind(this);
   }
 
-  
-  refreshResults() {
-    let newQuery = this.props.query.q;
-    if (newQuery === undefined) {
-      this.setState({ results: [] });
+  refreshResults(props) {
+    props = props || this.props;
+    let newQuery = props.query.q || '';
+    if (newQuery.trim() === this.state.query.trim()) {
       return;
     }
 
-    if (newQuery.trim() === this.state.query.trim()) {
+    if (newQuery === '') {
+      this.setState({ results:[], query:'', start:0 });
       return;
     }
 
     this.setState({query: newQuery});
 
+    var queryString = 'q=' + encodeURIComponent(newQuery);
+    if (this.state.start !== 0) {
+      queryString += '&start=' + encodeURIComponent(this.state.start);
+    }
+
     var me = this;
-    fetch('/query?q=' + encodeURIComponent(newQuery))
+    fetch('/query?' + queryString)
     .then(function(response) {
       return response.json();
     }).then(function(response) {
@@ -36,8 +42,8 @@ export default class SearchResults extends React.Component {
     });
   }
 
-  componentDidUpdate() {
-    this.refreshResults();
+  componentWillReceiveProps(nextProps) {
+    this.refreshResults(nextProps);
   }
 
   componentDidMount() {
