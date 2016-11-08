@@ -37,9 +37,9 @@ function convertSymbols(text) {
     let symbol = textParts[i].replace(alphanumRegex, '').toLowerCase();
     if (symbolTranslations.hasOwnProperty(symbol)) {
       let symbolUrl = symbolBaseUrl + symbolTranslations[symbol] + '.png';
-      newNodes.push( <img src={ symbolUrl } key={i} /> );
+      newNodes.push( <img src={ symbolUrl } key={"sym" + i} /> );
     } else {
-      newNodes.push(textParts[i]);
+      newNodes.push( <span key={"text" + i}>{ textParts[i] }</span> );
     }
   } 
 
@@ -63,8 +63,8 @@ function prepareRulesText(text) {
     // Has an ability word?
     let dashIdx = lineText.indexOf('\u2014');
     if (dashIdx > -1) {
-      lineChildren.push(<i> {lineText.substring(0, dashIdx)} </i>);
-      lineChildren.push('\u2014');
+      lineChildren.push(<i key="ability"> {lineText.substring(0, dashIdx)} </i>);
+      lineChildren.push(<span key="dash">{'\u2014'}</span>);
       lineText = lineText.substring(dashIdx + 1);
     }
 
