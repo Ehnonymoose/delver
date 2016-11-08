@@ -53,7 +53,6 @@ def ensureCardExists(cardData):
 		# print("Added card with name '" + cardData['name'] + "' and id " + str(thisCard.id))
 		return thisCard
 
-
 def generate_card(cardData):
 	if cardData['layout'] in [ 'plane', 'vanguard', 'phenomenon', 'scheme' ]:
 		return
@@ -84,6 +83,31 @@ def generate_card(cardData):
 		colorId,
 		cardData['type']
 	)
+
+
+
+	if 'legalities' in cardData:
+		formats = [ 'Standard', 'Modern', 'Legacy', 'Vintage', 'Commander' ]
+
+		# Mark things as legal, if not explicitly banned
+		for formatInfo in cardData['legalities']:
+			formatName = formatInfo['format']
+			legal = formatInfo['legality']
+
+			if legal != 'Banned' and formatName in formats:
+				if formatName == 'Standard':
+					print("Marking", cardData['name'], "as Standard-legal")
+					thisCard.standardLegal = True
+				elif formatName == 'Modern':
+					thisCard.modernLegal = True
+				elif formatName == 'Legacy':
+					thisCard.legacyLegal = True
+				elif formatName == 'Vintage':
+					thisCard.vintageLegal = True
+				elif formatName == 'Commander':
+					thisCard.commanderLegal = True
+
+
 
 	if 'names' in cardData:
 		related[ cardData['name'] ] = cardData['names']

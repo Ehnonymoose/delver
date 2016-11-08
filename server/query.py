@@ -142,6 +142,20 @@ def createManaCondition(operator, term):
 	normalMana = mana.normalize(term)
 	return (models.Card.manaCost == normalMana)
 	
+def createFormatCondition(operator, term):
+	if 'standard'.startswith(term):
+		return (models.Card.standardLegal == True)
+	if 'modern'.startswith(term):
+		return (models.Card.modernLegal == True)
+	if 'legacy'.startswith(term):
+		return (models.Card.legacyLegal == True)
+	if 'vintage'.startswith(term):
+		return (models.Card.vintageLegal == True)
+	if 'commander'.startswith(term):
+		return (models.Card.commanderLegal == True)
+
+	return True
+
 
 
 ######### List of supported tags #########
@@ -157,6 +171,7 @@ QUERY_TAGS = {
 	'pow': ([':', '=', '>', '<', '<=', '>=', '!='], createPowerCondition),
 	'tou': ([':', '=', '>', '<', '<=', '>=', '!='], createToughnessCondition),
 	'name': ([':', '!'], createTextConditionForField(models.Card.name)),
+	'f': ([':'], createFormatCondition),
 
 	# The following ones require information about a specific printing
 	'ft': ([':', '!'], createTextConditionForField(models.CardPrinting.flavor)),

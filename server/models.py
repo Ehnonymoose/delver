@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, Enum, Unicode, UnicodeText, ForeignKey
+from sqlalchemy import Table, Column, Integer, String, Enum, Unicode, UnicodeText, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -62,6 +62,14 @@ class Card(Base):
 
 	# Starting loyalty, if applicable
 	loyalty = Column(Integer)
+
+	# Format legality. There is probably a better way to store these.
+	standardLegal = Column(Boolean, default=False)
+	modernLegal = Column(Boolean, default=False)
+	legacyLegal = Column(Boolean, default=False)
+	vintageLegal = Column(Boolean, default=False)
+	commanderLegal = Column(Boolean, default=False)
+
 
 	def __init__(self, name, layout, manaCost, cmc, colors, colorIdentity, types):
 		self.name = name
