@@ -45,7 +45,7 @@ export default class SearchResults extends React.Component {
   }
 
   render() {
-    if (this.state.results.length > 1)
+    if (this.state.results.length >= 1)
     {
       let cardList = this.state.results.map( function(card, idx) {
         console.dir(card);

@@ -45,8 +45,6 @@ def serializeCard(card, printing, cardSet):
 	if printing.rarity is not None:
 		data['rarity'] = printing.rarity
 
-	print(data)
-
 	return data
 
 
@@ -62,7 +60,9 @@ def handleQuery():
 		.join(models.CardPrinting).join(models.Set)\
 		.filter(statement)\
 		.group_by(models.Card.id).order_by(models.Card.name)\
-		.distinct().limit(10)
+		.limit(10)
+
+	print(sql)
 
 	results = sql.all()
 	

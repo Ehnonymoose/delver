@@ -2,16 +2,16 @@
 import database
 import models
 
-from sqlalchemy import func
+from sqlalchemy import func, and_, or_, not_
 
 ######### Individial Condition Generators #########
 
 def createTextConditionForField(field):
 	def createTextCondition(operator, term):
 		if operator == ':':
-			return field.ilike('%' + term + '%')
+			return field.contains(term)
 		elif operator == '!':
-			return (func.lower(field) == func.lower(term))
+			return (func.lower(field) == term.lower())
 
 	return createTextCondition
 
@@ -20,6 +20,7 @@ def createNumericalConditionForField(field, operator, term):
 	try:
 		rhs = int(term)
 	except ValueError:
+		term = term.lower()
 		if term == 'pow':
 			rhs = models.Card.powerNum
 		elif term == 'tou':
@@ -51,6 +52,7 @@ def createCMCCondition(operator, term):
 
 def createPowerCondition(operator, term):
 	# For exact matches, use string comparison
+	term = term.lower()
 	if operator in ":=":
 		if term == 'tou':
 			rhs = models.Card.toughness
@@ -65,6 +67,7 @@ def createPowerCondition(operator, term):
 		return createNumericalConditionForField(models.Card.powerNum, operator, term)
 
 def createToughnessCondition(operator, term):
+	term = term.lower()
 	if operator in ":=":
 		if term == 'pow':
 			rhs = models.Card.power
@@ -80,13 +83,62 @@ def createToughnessCondition(operator, term):
 
 
 def createSetCondition(operator, term):
-	return (func.lower(models.Set.code) == func.lower(term))
+	return (func.lower(models.Set.code) == term.lower())
 
 
-#TODO: these
-def createColorCondition(operator, term):
-	pass
+def createExclusiveColorCondition(field, term, multicolor):
+	allColors = set('wubrg')
+	usedColors = set(term)
+	unusedColors = allColors - usedColors
 
+	usedClauses = [ field.contains(c) for c in usedColors ]
+	unusedClauses = [ not_(field.contains(c)) for c in unusedColors ]
+
+	# If the 'm' flag was passed, require that every color be present.
+	# Otherwise, require only that at least one color is present.
+	if multicolor:
+		return and_(*usedClauses, *unusedClauses)
+	else:
+		return and_(or_(*usedClauses), *unusedClauses)
+
+
+def createInclusiveColorCondition(field, term, multicolor):
+	# Require that at least one of these colors is present
+	colorClauses = [ field.contains(c) for c in term ]
+	clause = or_(*colorClauses)
+
+	if multicolor:
+		# Also require that more than one color is present
+		return and_(clause, func.char_length(field) > 1)
+	else:
+		return clause
+
+
+def createColorConditionForField(field):
+	def createColorCondition(operator, term):
+		term = term.lower()
+
+		multicolor = False
+		if 'm' in term:
+			# Require multicolored
+			multicolor = True
+			term = term.replace('m', '')
+
+		if operator == '!':
+			return createExclusiveColorCondition(field, term, multicolor)
+		else:
+			return createInclusiveColorCondition(field, term, multicolor)
+
+
+
+	return createColorCondition
+
+
+def createRarityCondition(operator, term):
+	return func.lower(models.CardPrinting.rarity).startswith(term.lower())
+
+
+# TODO: this
 def createManaCondition(operator, term):
 	pass
 
@@ -96,8 +148,8 @@ def createManaCondition(operator, term):
 QUERY_TAGS = {
 	't': ([':', '!'], createTextConditionForField(models.Card.types)),
 	'o': ([':', '!'], createTextConditionForField(models.Card.rules)),
-	#'c': ([':', '!'], createColorCondition),
-	#'ci': ([':', '!'], createColorIdentityCondition),
+	'c': ([':', '!'], createColorConditionForField(models.Card.colors)),
+	'ci': ([':', '!'], createColorConditionForField(models.Card.colorIdentity)),
 	#'mana': ([':'], createManaCondition),
 	#'mc': ([':'], createManaCondition),
 	'cmc': ([':', '=', '>', '<', '<=', '>=', '!='], createCMCCondition),
@@ -108,7 +160,8 @@ QUERY_TAGS = {
 	# The following ones require information about a specific printing
 	'ft': ([':', '!'], createTextConditionForField(models.CardPrinting.flavor)),
 	'set': ([':'], createSetCondition),
-	'e': ([':'], createSetCondition)
+	'e': ([':'], createSetCondition),
+	'r': ([':'], createRarityCondition)
 }
 
 
