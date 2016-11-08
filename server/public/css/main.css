@@ -15,3 +15,7 @@ span.compact-mana {
 span.compact-mana > img {
 	height: 0.8em;
 }
+
+div.compact-rules img {
+	height: 1em;
+}

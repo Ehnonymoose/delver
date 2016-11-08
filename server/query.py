@@ -1,6 +1,7 @@
 
 import database
 import models
+import mana
 
 from sqlalchemy import func, and_, or_, not_
 
@@ -137,10 +138,10 @@ def createColorConditionForField(field):
 def createRarityCondition(operator, term):
 	return func.lower(models.CardPrinting.rarity).startswith(term.lower())
 
-
-# TODO: this
 def createManaCondition(operator, term):
-	pass
+	normalMana = mana.normalize(term)
+	return (models.Card.manaCost == normalMana)
+	
 
 
 ######### List of supported tags #########
@@ -150,8 +151,8 @@ QUERY_TAGS = {
 	'o': ([':', '!'], createTextConditionForField(models.Card.rules)),
 	'c': ([':', '!'], createColorConditionForField(models.Card.colors)),
 	'ci': ([':', '!'], createColorConditionForField(models.Card.colorIdentity)),
-	#'mana': ([':'], createManaCondition),
-	#'mc': ([':'], createManaCondition),
+	'mana': ([':'], createManaCondition),
+	'mc': ([':'], createManaCondition),
 	'cmc': ([':', '=', '>', '<', '<=', '>=', '!='], createCMCCondition),
 	'pow': ([':', '=', '>', '<', '<=', '>=', '!='], createPowerCondition),
 	'tou': ([':', '=', '>', '<', '<=', '>=', '!='], createToughnessCondition),

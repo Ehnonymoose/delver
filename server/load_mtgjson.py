@@ -1,10 +1,8 @@
 import models
 import database
+import mana
 
 import json
-
-import pdb
-
 
 def statToNum(s):
 	if 'X' in s or '*' in s:
@@ -71,7 +69,7 @@ def generate_card(cardData):
 		colorId = 'c'
 
 	if 'manaCost' in cardData:
-		mc = cardData['manaCost']
+		mc = mana.normalize(cardData['manaCost'])
 		cmc = cardData['cmc']
 	else:
 		mc = ''
