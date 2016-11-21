@@ -11,6 +11,7 @@ function buildQueryString(query, start) {
   return queryString;
 }
 
+
 export default class SearchResults extends React.Component {
   constructor(props) {
     super(props);
@@ -53,28 +54,17 @@ export default class SearchResults extends React.Component {
   }
 
   render() {
-    // TODO: change ">=" to ">" once detailed single-card view is supported
-    if (this.state.results.length >= 1)
+    if (this.state.results.length > 1)
     {
-      return (
-        <div>
-          <CustomCardList cards={this.state.results} />
-        </div>
-      );
+      return <MultiCardResult cards={this.state.results} />;
     }
     else if (this.state.results.length === 1)
     {
-      // TODO: more-detailed view for single-card results
-      return (
-        <div className="col-sm-10 col-sm-offset-1">
-          Unfortunately, we don't yet support single-card display :(
-        </div>
-      );
+      return <SingleCardResult card={this.state.results[0]} />;
     }
     else if (this.state.results.length === 0 && this.props.query !== '')
     {
-      // TODO: make this look nicer
-      return <div className="col-sm-10 col-sm-offset-1">No cards returned!</div>;
+      return <EmptyResult />
     }
     else
     {
@@ -85,7 +75,7 @@ export default class SearchResults extends React.Component {
 }
 
 
-class CustomCardList extends React.Component {
+class MultiCardResult extends React.Component {
   render() {
     let cardList = this.props.cards.map( function(card, idx) {
       return (
@@ -98,5 +88,24 @@ class CustomCardList extends React.Component {
         {cardList}
       </div>
     );
+  }
+}
+
+class SingleCardResult extends React.Component {
+  render() {
+    // TODO: include more details when displaying a single card
+
+    return (
+      <div className="list-group col-sm-10 col-sm-offset-1">
+        <CompactCard {...this.props.card} />
+      </div>
+    );
+  }
+}
+
+class EmptyResult extends React.Component {
+  render() {
+      // TODO: make this look nicer
+      return <div className="col-sm-10 col-sm-offset-1">No cards returned!</div>;
   }
 }

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
 import YMtG from './components/layout';
-import MainSearch from './components/search';
+import MainSearch from './components/search/main';
 
 ReactDOM.render((
   <Router history={browserHistory}>

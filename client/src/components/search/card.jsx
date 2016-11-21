@@ -18,6 +18,7 @@ let symbolTranslations = {
   /* Energy */          'e':'e'
 };
 
+// TODO: host better-looking mana symbols ourselves
 let symbolBaseUrl = "http://forum.nogoblinsallowed.com/images/smilies/mana/";
 
 function convertSymbols(text) {
