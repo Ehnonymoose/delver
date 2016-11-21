@@ -12,6 +12,10 @@ import models
 
 import json
 
+
+NUM_RESULTS_PER_QUERY = 15
+
+
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()
@@ -28,7 +32,7 @@ def serializeCard(card, printing, cardSet):
 		'cmc': card.cmc,
 		'types': card.types,
 		'rules': card.rules
-	};
+	}
 
 	if card.power is not None:
 		data['power'] = card.power
@@ -52,6 +56,14 @@ def serializeCard(card, printing, cardSet):
 def handleQuery():
 	tokens = query.parse(request.args.get('q', ''))
 	print(tokens)
+
+	start = request.args.get('start', 0)
+	try:
+		start = int(start)
+	except:
+		start = 0
+
+	print (start)
 	
 	clauses = query.generateClauses(tokens)
 	statement = and_(*clauses)
@@ -59,16 +71,29 @@ def handleQuery():
 	sql = db_session.query(models.Card, models.CardPrinting, models.Set)\
 		.join(models.CardPrinting).join(models.Set)\
 		.filter(statement)\
-		.group_by(models.Card.id).order_by(models.Card.name)\
-		.limit(10)
+		.group_by(models.Card.id).order_by(models.Card.name)
+
+	# Get a count of all results
+	count = sql.count()
+
+	# Now get a selection of results
+	if start > 0:
+		sql = sql.offset(start)
+
+	sql = sql.limit(NUM_RESULTS_PER_QUERY)
 
 	print(sql)
-
 	results = sql.all()
-	
-	return json.dumps( [serializeCard(*result) for result in results] )
 
+	serializedResults = [ serializeCard(*result) for result in results ]
 
+	results = {
+		'count': count,
+		'start': start,
+		'cards': serializedResults
+	}
+
+	return json.dumps(results)
 
 
 def nocache(view):
