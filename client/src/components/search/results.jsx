@@ -28,7 +28,8 @@ export default class SearchResults extends React.Component {
     this.state = { 
       results:[],   // array of objects holding card data
       count:0,      // count of *all* cards matching the query
-      start:0       // index of first returned card; think: "{start} to {start+results.length} of {count}".
+      start:0,      // index of first returned card; think: "{start} to {start+results.length} of {count}".
+      waiting:false // are we currently waiting results to come in?
     };
 
     this.refreshResults = debounce(this.refreshResults.bind(this), 200);
@@ -50,15 +51,17 @@ export default class SearchResults extends React.Component {
     .then(function(response) {
       return response.json();
     }).then(function(response) {
-      me.setState({ results: response.cards, count: response.count, start: response.start });
+      me.setState({ results: response.cards, count: response.count, start: response.start, waiting: false });
     });
   }
 
   componentWillReceiveProps(nextProps) {
+    this.setState({ waiting: true });
     this.refreshResults(nextProps);
   }
 
   componentDidMount() {
+    this.setState({ waiting: true });
     this.refreshResults(this.props);
   }
 
@@ -76,7 +79,7 @@ export default class SearchResults extends React.Component {
     {
       return <SingleCardResult card={this.state.results[0]} />;
     }
-    else if (this.state.results.length === 0 && this.props.query !== '')
+    else if (this.state.results.length === 0 && this.props.query !== '' && !this.state.waiting)
     {
       return <EmptyResult />
     }
