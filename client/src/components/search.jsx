@@ -13,29 +13,14 @@ function debounce(fn, interval) {
 class SearchBar extends React.Component {
   constructor(props) {
     super(props);
-
     this.updateQuery = this.updateQuery.bind(this);
-    this.submitQuery = this.submitQuery.bind(this);
   }
 
   updateQuery(evt) {
-    this.submitQuery(evt.target.value);
-  }
-
-  submitQuery(query) {
-    if (query === '') {
-      this.context.router.push({});
-    } else {
-      this.context.router.push({ query: { q: query } });
-    }
+    this.props.onUpdate(evt.target.value);
   }
 
   render() {
-    var currentQuery = "";
-    if (this.props.query) {
-      currentQuery = this.props.query.q || "";
-    }
-
     return (
       <div className="voffset">
         <form className="form" onSubmit={this.searchAll}>
@@ -47,8 +32,8 @@ class SearchBar extends React.Component {
                 className="form-control input-lg"
                 name="q"
                 placeholder="Query..."
-                value={currentQuery}
                 autoFocus="true"
+                value={this.props.query}
                 onChange={this.updateQuery}
               />
             </div>
@@ -60,19 +45,61 @@ class SearchBar extends React.Component {
 }
 
 export default class MainSearch extends React.Component {
+  constructor(props) {
+    super(props);
+
+    if (this.props.location.query) {
+      this.state = {
+        start: this.props.location.query.start || 0,
+        query: this.props.location.query.q || ''
+      };
+    }
+    else {
+      this.state = { start:0, query:'' };
+    }
+    
+    this.updateQueryString = this.updateQueryString.bind(this);
+    this.updateQueryStart = this.updateQueryStart.bind(this);
+  }
+
+  updateQueryString(newString) {
+    // TODO: de-dupe, don't do more work than we have to, etc.
+
+    if (newString === '') {
+      this.context.router.push({});
+    } else {
+      this.context.router.push({ query: { q: newString} });
+    }
+
+    this.setState({ query: newString, start: 0 });
+  }
+
+  updateQueryStart(newStart) {
+    // TODO: de-dupe, don't do more work than we have to, etc.
+
+    this.context.router.push({ query: { q: this.state.query, start: newStart }});
+
+    this.setState({ start:newStart });
+  }
+
   render() {
     return (
       <div>
-        <SearchBar query={this.props.location.query} />
-        <SearchResults query={this.props.location.query} />
+        <SearchBar
+          query={this.state.query}
+          onUpdate={this.updateQueryString}
+        />
+
+        <SearchResults
+          query={this.state.query}
+          start={this.state.start}
+          changeQuery={this.updateQueryString}
+          changeStart={this.updateQueryStart}  
+        />
       </div>
     );
   }
 }
-
-SearchBar.contextTypes = {
-  router: React.PropTypes.object.isRequired,
-};
 
 MainSearch.contextTypes = {
   router: React.PropTypes.object.isRequired,
