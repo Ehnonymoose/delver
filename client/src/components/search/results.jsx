@@ -1,5 +1,6 @@
 import React from 'react';
 import CompactCard from './card.jsx';
+import MultiCardResult from './MultiCardResult.jsx';
 
 
 function buildQueryString(query, start) {
@@ -54,9 +55,14 @@ export default class SearchResults extends React.Component {
   }
 
   render() {
-    if (this.state.results.length > 1)
+    if (this.state.count > 1)
     {
-      return <MultiCardResult cards={this.state.results} />;
+      return <MultiCardResult
+        cards={this.state.results}
+        count={this.state.count}
+        start={this.state.start}
+        changeStart={this.props.changeStart}
+      />;
     }
     else if (this.state.results.length === 1)
     {
@@ -74,22 +80,6 @@ export default class SearchResults extends React.Component {
   }
 }
 
-
-class MultiCardResult extends React.Component {
-  render() {
-    let cardList = this.props.cards.map( function(card, idx) {
-      return (
-        <CompactCard {...card} key={idx} />
-      );
-    });
-
-    return (
-      <div className="list-group col-sm-10 col-sm-offset-1">
-        {cardList}
-      </div>
-    );
-  }
-}
 
 class SingleCardResult extends React.Component {
   render() {
