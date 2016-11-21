@@ -12,6 +12,14 @@ function buildQueryString(query, start) {
   return queryString;
 }
 
+function debounce(fn, interval) {
+  var timeout;
+
+  return function () {
+    clearTimeout(timeout);
+    timeout = setTimeout(fn.apply.bind(fn, this, arguments), interval);
+  }
+}
 
 export default class SearchResults extends React.Component {
   constructor(props) {
@@ -23,7 +31,7 @@ export default class SearchResults extends React.Component {
       start:0       // index of first returned card; think: "{start} to {start+results.length} of {count}".
     };
 
-    this.refreshResults = this.refreshResults.bind(this);
+    this.refreshResults = debounce(this.refreshResults.bind(this), 200);
   }
 
   refreshResults(props) {
